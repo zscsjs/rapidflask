@@ -98,7 +98,8 @@ def get():
         description = d.get("weather")[0].get("description")
         forecast_list.append((day,mini,maxi,description))
         response = make_response(render_template("get.html", forecast_list=forecast_list, city=city, country=country))
-        response.set_cookie("last_city","{},{}".format(city,country), expires=datetime.datetime.today() + datetime.timedelta(days=365))
+        if request.args.get('remember'):
+            response.set_cookie("last_city","{},{}".format(city,country), expires=datetime.datetime.today() + datetime.timedelta(days=365))
         return response
 
 @app.route("/post", methods=["POST","GET"])
