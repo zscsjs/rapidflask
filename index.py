@@ -81,8 +81,9 @@ def search(searchcity = "Tokyo"):
 def get():
     getcity= request.args.get("city")
     if not getcity:
-        getcity="Jacksonville"
-
+        getcity=request.cookies.get("last_city")
+    if not getcity:
+        getcity="Portland"
     try:
         data = json.loads(get_weather(getcity))
         city = data['city']['name']
@@ -96,7 +97,7 @@ def get():
         maxi = d.get("temp").get("max")
         description = d.get("weather")[0].get("description")
         forecast_list.append((day,mini,maxi,description))
-        response = make_response(render_template("search.html", forecast_list=forecast_list, city=city, country=country))
+        response = make_response(render_template("get.html", forecast_list=forecast_list, city=city, country=country))
         response.set_cookie("last_city","{},{}".format(city,country), expires=datetime.datetime.today() + datetime.timedelta(days=365))
         return response
 
