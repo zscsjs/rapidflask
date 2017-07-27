@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import os
 import json
 import time
@@ -19,8 +20,8 @@ def goodbye():
 def hello_name(name):
     return "Hello, {}".format(name)
 
-def get_weather():
-    url = "http://api.openweathermap.org/data/2.5/forecast/daily?q=London&cnt=10&mode=json&units=metric&APPID=f9a69fdec39e6f457cae563a7d39d1da"
+def get_weather(city= "Mars"):
+    url = "http://api.openweathermap.org/data/2.5/forecast/daily?q={}&cnt=10&mode=json&units=metric&APPID=f9a69fdec39e6f457cae563a7d39d1da".format(city)
     response = urllib.request.urlopen(url).read()
     return response
 
@@ -40,7 +41,7 @@ def weather():
 
 @app.route("/altweather")
 def altweather():
-    data = json.loads(get_weather())
+    data = json.loads(get_weather("London"))
     day = time.strftime('%d %B', time.localtime(data.get('list')[0].get('dt')))
     mini = data.get("list")[0].get("temp").get("min")
     maxi = data.get("list")[0].get("temp").get("max")
@@ -49,7 +50,7 @@ def altweather():
 
 @app.route("/altweather2")
 def altweather2():
-    data = json.loads(get_weather())
+    data = json.loads(get_weather("London"))
     forecast_list = []
     for d in data.get("list"):
         day = time.strftime('%d %B', time.localtime(d.get('dt')))
@@ -58,6 +59,38 @@ def altweather2():
         description = d.get("weather")[0].get("description")
         forecast_list.append((day,mini,maxi,description))
     return render_template("altweather2.html", forecast_list=forecast_list)
+
+@app.route("/search")
+@app.route("/search/<searchcity>")
+def search(searchcity = "Tokyo"):
+    data = json.loads(get_weather(searchcity))
+    city = data['city']['name']
+    country = data['city']['country']
+    forecast_list = []
+    for d in data.get("list"):
+        day = time.strftime('%d %B', time.localtime(d.get('dt')))
+        mini = d.get("temp").get("min")
+        maxi = d.get("temp").get("max")
+        description = d.get("weather")[0].get("description")
+        forecast_list.append((day,mini,maxi,description))
+    return render_template("search.html", forecast_list=forecast_list, city=city, country=country)
+
+@app.route("/get")
+def get():
+    getcity= request.args.get("city")
+    if not getcity:
+        getcity="Jacksonville"
+    data = json.loads(get_weather(getcity))
+    city = data['city']['name']
+    country = data['city']['country']
+    forecast_list = []
+    for d in data.get("list"):
+        day = time.strftime('%d %B', time.localtime(d.get('dt')))
+        mini = d.get("temp").get("min")
+        maxi = d.get("temp").get("max")
+        description = d.get("weather")[0].get("description")
+        forecast_list.append((day,mini,maxi,description))
+    return render_template("search.html", forecast_list=forecast_list, city=city, country=country)
 
 
 if __name__ == '__main__':
