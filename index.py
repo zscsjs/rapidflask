@@ -38,6 +38,28 @@ def weather():
     page += "</body></html>"
     return page
 
+@app.route("/altweather")
+def altweather():
+    data = json.loads(get_weather())
+    day = time.strftime('%d %B', time.localtime(data.get('list')[0].get('dt')))
+    mini = data.get("list")[0].get("temp").get("min")
+    maxi = data.get("list")[0].get("temp").get("max")
+    description = data.get("list")[0].get("weather")[0].get("description")
+    return render_template("index.html", day=day, mini=mini, maxi=maxi, description=description)
+
+@app.route("/altweather2")
+def altweather2():
+    data = json.loads(get_weather())
+    forecast_list = []
+    for d in data.get("list"):
+        day = time.strftime('%d %B', time.localtime(d.get('dt')))
+        mini = d.get("temp").get("min")
+        maxi = d.get("temp").get("max")
+        description = d.get("weather")[0].get("description")
+        forecast_list.append((day,mini,maxi,description))
+    return render_template("altweather2.html", forecast_list=forecast_list)
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)

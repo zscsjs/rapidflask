@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>My Weather App</title>
+	</head>
+	<body>
+		<h1>Weather forecast for London</h1>
+		<table border="1">
+			<tr>
+				<th>Date</th><th>Min</th><th>Max</tx><th>Description</th>
+			</tr>
+			{% for day in forecast_list %}
+				<tr>
+					<td>{{day[0]}}</td>
+					<td>{{day[1]}}</td>
+					<td>{{day[2]}}</td>
+					<td>{{day[3]}}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</body>
+</html>
