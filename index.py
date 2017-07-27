@@ -96,6 +96,27 @@ def get():
         forecast_list.append((day,mini,maxi,description))
     return render_template("search.html", forecast_list=forecast_list, city=city, country=country)
 
+@app.route("/post", methods=["POST","GET"])
+def post():
+    getcity= request.form.get("city")
+    if not getcity:
+        getcity="Madrid"
+
+    try:
+        data = json.loads(get_weather(getcity))
+        city = data['city']['name']
+    except:
+        return render_template('invalid_city.html',user_input=getcity)
+    country = data['city']['country']
+    forecast_list = []
+    for d in data.get("list"):
+        day = time.strftime('%d %B', time.localtime(d.get('dt')))
+        mini = d.get("temp").get("min")
+        maxi = d.get("temp").get("max")
+        description = d.get("weather")[0].get("description")
+        forecast_list.append((day,mini,maxi,description))
+    return render_template("post.html", forecast_list=forecast_list, city=city, country=country)
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
