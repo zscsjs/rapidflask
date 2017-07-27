@@ -80,8 +80,12 @@ def get():
     getcity= request.args.get("city")
     if not getcity:
         getcity="Jacksonville"
-    data = json.loads(get_weather(getcity))
-    city = data['city']['name']
+
+    try:
+        data = json.loads(get_weather(getcity))
+        city = data['city']['name']
+    except:
+        return render_template('invalid_city.html',user_input=getcity)
     country = data['city']['country']
     forecast_list = []
     for d in data.get("list"):
