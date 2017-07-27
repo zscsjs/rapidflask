@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import make_response
+import datetime
 import os
 import json
 import time
@@ -94,7 +96,9 @@ def get():
         maxi = d.get("temp").get("max")
         description = d.get("weather")[0].get("description")
         forecast_list.append((day,mini,maxi,description))
-    return render_template("search.html", forecast_list=forecast_list, city=city, country=country)
+        response = make_response(render_template("search.html", forecast_list=forecast_list, city=city, country=country))
+        response.set_cookie("last_city","{},{}".format(city,country), expires=datetime.datetime.today() + datetime.timedelta(days=365))
+        return response
 
 @app.route("/post", methods=["POST","GET"])
 def post():
