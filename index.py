@@ -14,6 +14,10 @@ app = Flask(__name__)
 def index():
     return "hello, World";
 
+@app.route("/vim")
+def vim():
+    return "this is a new page for the computer"
+
 @app.route("/goodbye")
 def goodbye():
     return "Goodbye, World!"
