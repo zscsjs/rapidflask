@@ -18,6 +18,11 @@ def index():
 def vim():
     return "this is a new page for the computer"
 
+@app.route("/emacs")
+def vim():
+    if 2 = 2:
+        return "this is a new page for the computer"
+
 @app.route("/goodbye")
 def goodbye():
     return "Goodbye, World!"
